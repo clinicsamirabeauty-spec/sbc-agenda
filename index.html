@@ -2386,51 +2386,55 @@ function copyPix() {
 // ── PATCH enterApp to check subscription ─────────────
 const _origEnterApp = enterApp;
 enterApp = async function() {
-  const email = S.user?.email || S.user?.user_metadata?.email || '';
+  try {
+    const email = S.user?.email || S.user?.user_metadata?.email || '';
 
-  // Admin bypass
-  if(email === ADMIN_EMAIL) {
+    // Admin bypass - always enter
+    if(email === ADMIN_EMAIL || !email) {
+      _origEnterApp();
+      return;
+    }
+
+    // Check local trial
+    const trialStart = lsg('sbc_trial_start');
+    if(!trialStart) {
+      // First time - activate trial automatically and enter
+      lss('sbc_trial_start', new Date().toISOString());
+      _origEnterApp();
+      setTimeout(() => tk('🎉 30 dias grátis ativados! Bem-vinda ao SBC Agenda!'), 800);
+      return;
+    }
+
+    // Check if local trial expired
+    const trialDate = new Date(trialStart);
+    const daysPassed = Math.floor((new Date() - trialDate) / 86400000);
+
+    if(daysPassed > 35) {
+      ge('auth').classList.remove('show');
+      ge('blocked-screen').classList.add('show');
+      ge('blocked-msg').textContent = 'Seu período de acesso expirou. Assine o SBC Agenda para continuar.';
+      return;
+    }
+
+    if(daysPassed > 30) {
+      const daysLeft = 35 - daysPassed;
+      _origEnterApp();
+      setTimeout(() => tk('⚠️ Acesso encerra em ' + daysLeft + ' dia(s)! Regularize seu pagamento.'), 1000);
+      return;
+    }
+
+    if(daysPassed >= 25) {
+      const daysLeft = 30 - daysPassed;
+      _origEnterApp();
+      setTimeout(() => tk('⏰ Período grátis termina em ' + daysLeft + ' dia(s)!'), 1000);
+      return;
+    }
+
     _origEnterApp();
-    return;
+  } catch(err) {
+    console.error('enterApp error:', err);
+    _origEnterApp(); // Fallback - always let user in
   }
-
-  // Check local trial
-  const trialStart = lsg('sbc_trial_start');
-  if(!trialStart) {
-    // First time - show subscription screen
-    ge('auth').classList.remove('show');
-    ge('sub-screen').classList.add('show');
-    return;
-  }
-
-  // Check if local trial expired (30 days)
-  const trialDate = new Date(trialStart);
-  const daysPassed = Math.floor((new Date() - trialDate) / 86400000);
-
-  if(daysPassed > 35) {
-    // 30 days trial + 5 grace = blocked
-    ge('auth').classList.remove('show');
-    ge('blocked-screen').classList.add('show');
-    ge('blocked-msg').textContent = 'Seu período de acesso expirou. Assine o SBC Agenda para continuar.';
-    return;
-  }
-
-  if(daysPassed > 30) {
-    // In grace period
-    const daysLeft = 35 - daysPassed;
-    _origEnterApp();
-    setTimeout(() => tk(`⚠️ Acesso encerrado em ${daysLeft} dia${daysLeft>1?'s':''}! Regularize seu pagamento.`), 1000);
-    return;
-  }
-
-  if(daysPassed >= 25) {
-    const daysLeft = 30 - daysPassed;
-    _origEnterApp();
-    setTimeout(() => tk(`⏰ Período grátis termina em ${daysLeft} dia${daysLeft>1?'s':''}!`), 1000);
-    return;
-  }
-
-  _origEnterApp();
 };
 
 // ── ADMIN PANEL ───────────────────────────────────────
