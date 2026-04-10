@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="SBC Agenda">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png">
+<link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png">
 <meta name="theme-color" content="#AB7A44">
 <link rel="manifest" href="manifest.json">
 <title>SBC Agenda</title>
@@ -34,6 +37,79 @@ input,select,textarea{font-family:var(--fb);}
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-thumb{background:var(--c3l);border-radius:2px;}
 
+/* ── TIMELINE AGENDA ── */
+.tl-wrap{display:flex;flex-direction:column;height:calc(100vh - 120px);overflow:hidden;}
+.tl-header{flex-shrink:0;background:var(--white);border-bottom:1px solid var(--bdl);}
+.tl-week-strip{display:flex;align-items:center;padding:12px 16px 0;gap:0;border-bottom:1px solid var(--bdl);}
+.tl-month-lbl{font-size:10px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-right:12px;min-width:40px;}
+.tl-days{display:flex;flex:1;gap:2px;}
+.tl-day-btn{flex:1;display:flex;flex-direction:column;align-items:center;padding:6px 2px 10px;border:none;background:transparent;cursor:pointer;border-radius:var(--r3);transition:.15s;position:relative;}
+.tl-day-btn:hover{background:var(--c3xs);}
+.tl-day-btn.today .tl-day-num{background:var(--red);color:white;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;}
+.tl-day-btn.selected .tl-day-num{background:var(--c3);color:white;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;}
+.tl-day-name{font-size:9px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
+.tl-day-num{font-size:16px;color:var(--text);font-weight:400;line-height:1;}
+.tl-day-btn.today .tl-day-name{color:var(--red);}
+.tl-day-btn.selected .tl-day-name{color:var(--c3);}
+.tl-today-label{text-align:center;padding:8px;font-size:11px;color:var(--c3);letter-spacing:1px;}
+.tl-pro-row{display:flex;align-items:center;border-bottom:1px solid var(--bdl);padding:8px 16px;}
+.tl-pro-ic{width:28px;height:28px;background:var(--c3l);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-right:10px;flex-shrink:0;}
+.tl-pro-ic svg{width:16px;height:16px;stroke:var(--c3);fill:none;stroke-width:1.5;stroke-linecap:round;}
+.tl-pro-sel{font-size:12px;color:var(--c3);letter-spacing:.5px;background:none;border:none;display:flex;align-items:center;gap:5px;}
+.tl-pro-sel svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;}
+/* Timeline body */
+.tl-body{flex:1;overflow-y:auto;position:relative;display:flex;}
+.tl-time-col{width:52px;flex-shrink:0;padding-top:0;}
+.tl-time-slot{height:60px;display:flex;align-items:flex-start;justify-content:flex-end;padding-right:8px;padding-top:4px;font-size:10px;color:var(--t3);letter-spacing:.5px;border-right:1px solid var(--bdl);}
+.tl-events-col{flex:1;position:relative;}
+.tl-hour-line{height:60px;border-bottom:1px solid var(--bdl);position:relative;}
+.tl-hour-line.shaded{background:repeating-linear-gradient(45deg,rgba(0,0,0,.02),rgba(0,0,0,.02) 4px,transparent 4px,transparent 12px);}
+.tl-event-block{
+  position:absolute;left:4px;right:4px;
+  background:rgba(90,138,90,.18);
+  border-left:3px solid var(--green);
+  border-radius:0 var(--r3) var(--r3) 0;
+  padding:6px 10px;cursor:pointer;
+  transition:.15s;overflow:hidden;
+  z-index:2;
+}
+.tl-event-block:hover{filter:brightness(.96);}
+.tl-event-block.confirmado{background:rgba(90,138,90,.2);border-left-color:var(--green);}
+.tl-event-block.agendado{background:rgba(171,122,68,.15);border-left-color:var(--c3);}
+.tl-event-block.cancelado{background:rgba(168,64,48,.1);border-left-color:var(--red);opacity:.6;}
+.tl-event-block.bloqueado{background:rgba(0,0,0,.06);border-left-color:var(--bd);}
+.tl-event-time{font-size:10px;color:var(--t2);font-weight:500;letter-spacing:.3px;}
+.tl-event-name{font-size:12px;color:var(--text);margin-top:2px;letter-spacing:.3px;}
+.tl-event-proc{font-size:10px;color:var(--t3);margin-top:1px;display:flex;align-items:center;gap:4px;}
+.tl-event-proc svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;flex-shrink:0;}
+.tl-now-line{position:absolute;left:0;right:0;height:2px;background:var(--red);z-index:3;}
+.tl-now-line::before{content:'';position:absolute;left:-4px;top:-4px;width:10px;height:10px;background:var(--red);border-radius:50%;}
+/* FAB */
+.fab-wrap{position:fixed;bottom:28px;right:20px;z-index:200;display:flex;flex-direction:column;align-items:flex-end;gap:12px;}
+.fab-options{display:flex;flex-direction:column;gap:10px;align-items:flex-end;transition:.3s;opacity:0;pointer-events:none;transform:translateY(10px);}
+.fab-options.open{opacity:1;pointer-events:all;transform:translateY(0);}
+.fab-option{display:flex;align-items:center;gap:10px;}
+.fab-option-label{background:var(--white);padding:6px 14px;border-radius:20px;font-size:11px;color:var(--text);letter-spacing:.5px;box-shadow:var(--sh2);white-space:nowrap;}
+.fab-btn{width:46px;height:46px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;box-shadow:var(--sh2);transition:.2s;flex-shrink:0;}
+.fab-btn svg{width:20px;height:20px;stroke:white;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.fab-main{width:54px;height:54px;background:var(--c3);color:white;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;box-shadow:var(--sh3);transition:.3s;cursor:pointer;}
+.fab-main svg{width:24px;height:24px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;transition:.3s;}
+.fab-main.open{background:var(--text);}
+.fab-main.open svg{transform:rotate(45deg);}
+.fab-today{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--c3);color:white;border:none;border-radius:20px;padding:10px 24px;font-family:var(--fb);font-size:11px;letter-spacing:1.5px;cursor:pointer;z-index:200;box-shadow:var(--sh2);}
+/* Signature pad */
+.sig-wrap{border:1px solid var(--bd);border-radius:var(--r3);background:var(--white);overflow:hidden;}
+.sig-canvas{width:100%;height:180px;cursor:crosshair;touch-action:none;}
+.sig-controls{display:flex;gap:8px;padding:8px 10px;background:var(--c3xs);border-top:1px solid var(--bdl);}
+/* Calendar mini overlay */
+.cal-overlay{display:none;position:fixed;inset:0;background:rgba(40,24,12,.42);backdrop-filter:blur(5px);z-index:300;align-items:flex-start;justify-content:flex-end;padding:60px 16px 0;}
+.cal-overlay.open{display:flex;}
+.cal-popup{background:var(--white);border-radius:var(--r1);width:100%;max-width:380px;box-shadow:var(--sh3);overflow:hidden;max-height:85vh;overflow-y:auto;}
+.cal-popup-search{padding:14px 16px;border-bottom:1px solid var(--bdl);display:flex;align-items:center;gap:8px;}
+.cal-popup-search svg{width:14px;height:14px;stroke:var(--t3);fill:none;stroke-width:1.8;stroke-linecap:round;flex-shrink:0;}
+.cal-popup-search input{border:none;background:transparent;font-family:var(--fb);font-size:12px;color:var(--text);outline:none;flex:1;letter-spacing:.3px;}
+
+
 /* ── LOADING ── */
 #ls{position:fixed;inset:0;background:linear-gradient(150deg,var(--c3d),var(--c3));display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .6s;}
 .ls-logo{width:150px;filter:grayscale(1) contrast(10) brightness(4);mix-blend-mode:screen;}
@@ -44,10 +120,10 @@ input,select,textarea{font-family:var(--fb);}
 #auth{display:none;min-height:100vh;background:linear-gradient(150deg,var(--c3d),var(--c3),var(--c2));align-items:center;justify-content:center;padding:20px;}
 #auth.show{display:flex;}
 .auth-box{background:var(--white);border-radius:28px;width:100%;max-width:380px;box-shadow:var(--sh3);overflow:hidden;}
-.auth-hd{background:linear-gradient(135deg,var(--c3d),var(--c3));padding:38px 28px 28px;text-align:center;}
-.auth-logo{width:110px;filter:grayscale(1) contrast(10) brightness(4);mix-blend-mode:screen;}
-.auth-title{font-family:var(--fd);font-size:22px;font-weight:300;color:var(--c1);letter-spacing:4px;margin-top:10px;}
-.auth-sub{font-size:9px;letter-spacing:4px;color:rgba(248,247,245,.45);text-transform:uppercase;margin-top:4px;}
+.auth-hd{background:linear-gradient(135deg,var(--c3d),var(--c3));padding:44px 28px 36px;text-align:center;}
+.auth-logo{display:none;}
+.auth-title{font-family:var(--fd);font-size:32px;font-weight:300;color:var(--c1);letter-spacing:6px;margin-top:0;}
+.auth-sub{font-size:9px;letter-spacing:4px;color:rgba(248,247,245,.45);text-transform:uppercase;margin-top:8px;}
 .auth-bd{padding:28px;}
 .auth-tabs{display:flex;border:1px solid var(--bdl);border-radius:var(--r3);overflow:hidden;margin-bottom:22px;}
 .atab{flex:1;padding:10px;border:none;background:transparent;font-size:11px;letter-spacing:1px;color:var(--t3);transition:.2s;}
@@ -543,6 +619,57 @@ input,select,textarea{font-family:var(--fb);}
   .mbody,.mhd,.mfoot{padding:18px;}
 }
 @media(max-width:440px){.stats{grid-template-columns:1fr;}.day-circle-outer{width:38px;height:38px;}.day-inner{width:28px;height:28px;font-size:11px;}}
+
+/* ── SUBSCRIPTION / PLANS ── */
+#sub-screen{display:none;min-height:100vh;background:linear-gradient(150deg,var(--c3d),var(--c3),var(--c2));align-items:center;justify-content:center;padding:20px;}
+#sub-screen.show{display:flex;}
+.sub-box{background:var(--white);border-radius:28px;width:100%;max-width:860px;box-shadow:var(--sh3);overflow:hidden;}
+.sub-hd{background:linear-gradient(135deg,var(--c3d),var(--c3));padding:32px 36px;text-align:center;}
+.sub-hd h2{font-family:var(--fd);font-size:26px;font-weight:300;color:var(--c1);letter-spacing:4px;}
+.sub-hd p{font-size:11px;color:rgba(248,247,245,.6);letter-spacing:2px;margin-top:6px;}
+.sub-trial{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:8px 20px;display:inline-block;margin-top:12px;font-size:12px;color:var(--c1);letter-spacing:1px;}
+.sub-body{padding:32px 36px;}
+.plans-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;}
+.plan-card{border:2px solid var(--bdl);border-radius:var(--r1);padding:24px;cursor:pointer;transition:.2s;position:relative;text-align:center;}
+.plan-card:hover{border-color:var(--c2);}
+.plan-card.selected{border-color:var(--c3);background:var(--c3xs);}
+.plan-badge{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--c3);color:white;font-size:9px;letter-spacing:2px;padding:3px 12px;border-radius:10px;white-space:nowrap;}
+.plan-name{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--t3);margin-bottom:8px;}
+.plan-price{font-family:var(--fd);font-size:38px;font-weight:300;color:var(--text);}
+.plan-period{font-size:10px;color:var(--t3);letter-spacing:1px;margin-top:2px;}
+.plan-detail{font-size:11px;color:var(--green);margin-top:8px;letter-spacing:.3px;}
+.plan-features{margin-top:14px;text-align:left;}
+.plan-feature{font-size:11px;color:var(--t2);padding:3px 0;display:flex;align-items:center;gap:6px;}
+.plan-feature::before{content:'✓';color:var(--green);font-weight:bold;flex-shrink:0;}
+.sub-coupon{margin-bottom:20px;}
+.coupon-row{display:flex;gap:8px;}
+.coupon-input{flex:1;padding:11px 14px;border:1px solid var(--bd);border-radius:var(--r3);font-family:var(--fb);font-size:12px;color:var(--text);outline:none;transition:.2s;text-transform:uppercase;}
+.coupon-input:focus{border-color:var(--c2);}
+.coupon-msg{font-size:11px;margin-top:6px;padding:6px 10px;border-radius:var(--r3);}
+.coupon-ok{background:#E8F4E8;color:var(--green);}
+.coupon-err{background:#FCE9E6;color:var(--red);}
+.pay-methods{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.pay-btn{padding:14px;border-radius:var(--r2);border:2px solid var(--bdl);background:var(--white);cursor:pointer;transition:.2s;text-align:center;}
+.pay-btn:hover{border-color:var(--c2);}
+.pay-btn.selected{border-color:var(--c3);background:var(--c3xs);}
+.pay-btn-icon{font-size:24px;margin-bottom:4px;}
+.pay-btn-label{font-size:11px;color:var(--t2);letter-spacing:.5px;}
+.pix-section{display:none;text-align:center;padding:20px;}
+.pix-qr{width:180px;height:180px;border:1px solid var(--bd);border-radius:var(--r2);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;background:var(--c1);}
+.pix-code{background:var(--c3xs);border:1px solid var(--bd);border-radius:var(--r3);padding:10px;font-size:10px;word-break:break-all;color:var(--t2);margin-bottom:12px;cursor:pointer;}
+.blocked-screen{display:none;min-height:100vh;background:var(--cream);align-items:center;justify-content:center;text-align:center;padding:20px;}
+.blocked-screen.show{display:flex;flex-direction:column;}
+.blocked-icon{font-size:64px;margin-bottom:16px;}
+.blocked-title{font-family:var(--fd);font-size:28px;font-weight:300;color:var(--text);letter-spacing:3px;margin-bottom:8px;}
+.blocked-msg{font-size:13px;color:var(--t3);max-width:400px;line-height:1.7;margin-bottom:24px;}
+/* Admin panel */
+.admin-panel{background:var(--white);border:2px solid var(--c3);border-radius:var(--r2);padding:20px;margin-bottom:20px;}
+.admin-title{font-family:var(--fd);font-size:18px;color:var(--c3);letter-spacing:2px;margin-bottom:14px;}
+.admin-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
+.admin-stat{background:var(--c3xs);border-radius:var(--r2);padding:14px;text-align:center;}
+.admin-stat-val{font-family:var(--fd);font-size:28px;color:var(--text);}
+.admin-stat-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-top:4px;}
+@media(max-width:600px){.plans-row{grid-template-columns:1fr;}.pay-methods{grid-template-columns:1fr 1fr;}.sub-body{padding:20px;}.sub-hd{padding:24px 20px;}.admin-stat-row{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -583,7 +710,120 @@ input,select,textarea{font-family:var(--fb);}
 
 <!-- APP -->
 <div id="app">
-  <div class="sbbk" id="sbbk" onclick="closeSB()"></div>
+  
+<!-- SUBSCRIPTION SCREEN -->
+<div id="sub-screen">
+  <div class="sub-box">
+    <div class="sub-hd">
+      <h2>SBC Agenda</h2>
+      <p>Gestão completa para sua clínica de beleza</p>
+      <div class="sub-trial">🎁 1 mês grátis · Sem cartão necessário</div>
+    </div>
+    <div class="sub-body">
+      <!-- Plans -->
+      <div class="plans-row">
+        <div class="plan-card selected" id="plan-mensal" onclick="selectPlan('mensal')">
+          <div class="plan-name">Mensal</div>
+          <div class="plan-price">R$ 25<span style="font-size:20px">,90</span></div>
+          <div class="plan-period">por mês</div>
+          <div class="plan-features">
+            <div class="plan-feature">Agenda completa</div>
+            <div class="plan-feature">Clientes ilimitadas</div>
+            <div class="plan-feature">Equipe ilimitada</div>
+            <div class="plan-feature">Anamnese digital</div>
+            <div class="plan-feature">WhatsApp integrado</div>
+          </div>
+        </div>
+        <div class="plan-card" id="plan-anual" onclick="selectPlan('anual')">
+          <div class="plan-badge">MELHOR VALOR</div>
+          <div class="plan-name">Anual</div>
+          <div class="plan-price">R$ 297<span style="font-size:18px">,00</span></div>
+          <div class="plan-period">por ano · em até 10x</div>
+          <div class="plan-detail">Equivale a R$ 24,75/mês</div>
+          <div class="plan-features">
+            <div class="plan-feature">Tudo do plano mensal</div>
+            <div class="plan-feature">2 meses grátis</div>
+            <div class="plan-feature">Suporte prioritário</div>
+            <div class="plan-feature">Novidades antecipadas</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coupon -->
+      <div class="sub-coupon">
+        <label class="fl" style="display:block;margin-bottom:6px">Cupom de desconto</label>
+        <div class="coupon-row">
+          <input class="coupon-input" type="text" id="coupon-input" placeholder="DIGITE SEU CUPOM">
+          <button class="btn bp" onclick="applyCoupon()">Aplicar</button>
+        </div>
+        <div id="coupon-msg" style="display:none" class="coupon-msg"></div>
+      </div>
+
+      <!-- Total -->
+      <div style="background:var(--c3xs);border-radius:var(--r2);padding:14px 18px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-size:11px;color:var(--t3);letter-spacing:1px">TOTAL APÓS PERÍODO GRÁTIS</div>
+          <div id="sub-total" style="font-family:var(--fd);font-size:22px;color:var(--c3);margin-top:2px">R$ 25,90/mês</div>
+        </div>
+        <div style="font-size:11px;color:var(--green);text-align:right">✓ 30 dias grátis<br>primeiro</div>
+      </div>
+
+      <!-- Pay method -->
+      <div style="font-size:8.5px;letter-spacing:2px;text-transform:uppercase;color:var(--c2);margin-bottom:10px">Forma de pagamento</div>
+      <div class="pay-methods">
+        <div class="pay-btn selected" id="pay-pix" onclick="selectPay('pix')">
+          <div class="pay-btn-icon">📱</div>
+          <div class="pay-btn-label">PIX</div>
+        </div>
+        <div class="pay-btn" id="pay-card" onclick="selectPay('card')">
+          <div class="pay-btn-icon">💳</div>
+          <div class="pay-btn-label">Cartão de Crédito</div>
+        </div>
+      </div>
+
+      <!-- Card form -->
+      <div id="card-form" style="display:none;margin-bottom:16px">
+        <div class="fg">
+          <div class="fi full"><label class="fl">Número do cartão</label><input class="fin" type="text" id="card-num" placeholder="0000 0000 0000 0000" maxlength="19"></div>
+          <div class="fi full"><label class="fl">Nome no cartão</label><input class="fin" type="text" id="card-name" placeholder="NOME COMO NO CARTÃO"></div>
+          <div class="fi"><label class="fl">Validade</label><input class="fin" type="text" id="card-exp" placeholder="MM/AA" maxlength="5"></div>
+          <div class="fi"><label class="fl">CVV</label><input class="fin" type="text" id="card-cvv" placeholder="123" maxlength="4"></div>
+          <div class="fi"><label class="fl">CPF do titular</label><input class="fin" type="text" id="card-cpf" placeholder="000.000.000-00"></div>
+          <div class="fi"><label class="fl">Parcelas</label>
+            <select class="fsel" id="card-inst"><option value="1">1x sem juros</option></select>
+          </div>
+        </div>
+      </div>
+
+      <!-- PIX section -->
+      <div class="pix-section" id="pix-section">
+        <div style="font-size:13px;color:var(--t2);margin-bottom:16px">Escaneie o QR Code ou copie o código PIX</div>
+        <div class="pix-qr" id="pix-qr"><div style="font-size:11px;color:var(--t3)">Gerando QR Code...</div></div>
+        <div class="pix-code" id="pix-code" onclick="copyPix()">Aguardando...</div>
+        <button class="btn bs btn-sm" onclick="copyPix()">Copiar código PIX</button>
+        <div style="font-size:11px;color:var(--t3);margin-top:12px">Após o pagamento do primeiro mês, a assinatura será automática</div>
+      </div>
+
+      <button class="btn bp btn-lg" style="width:100%" id="sub-btn" onclick="doSubscribe()">
+        Começar 30 dias grátis
+      </button>
+      <div style="font-size:10px;color:var(--t3);text-align:center;margin-top:10px;letter-spacing:.3px">
+        Cancele quando quiser · Sem fidelidade
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BLOCKED SCREEN -->
+<div class="blocked-screen" id="blocked-screen">
+  <div class="blocked-icon">🔒</div>
+  <div class="blocked-title">Acesso Bloqueado</div>
+  <div class="blocked-msg" id="blocked-msg">Seu período de acesso expirou. Regularize seu pagamento para continuar usando o SBC Agenda.</div>
+  <button class="btn bp btn-lg" onclick="showSubScreen()">Regularizar Pagamento</button>
+  <button class="btn bs btn-sm" style="margin-top:10px" onclick="doLogout()">Sair</button>
+</div>
+
+<div class="sbbk" id="sbbk" onclick="closeSB()"></div>
 
   <!-- SIDEBAR -->
   <aside class="sb" id="sb">
@@ -679,6 +919,9 @@ input,select,textarea{font-family:var(--fb);}
       <div style="display:flex;align-items:center;gap:14px">
         <div class="sync-row"><div class="sync-d" id="sdot"></div><span id="stxt">Local</span></div>
         <div class="tb-date" id="tb-date"></div>
+        <button onclick="openCalOverlay()" style="background:none;border:none;color:var(--c3);display:flex;align-items:center;padding:4px;" title="Calendário">
+          <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </button>
       </div>
     </header>
 
@@ -707,80 +950,58 @@ input,select,textarea{font-family:var(--fb);}
       </div>
 
       <!-- ══ AGENDA ══ -->
-      <div class="page" id="page-agenda">
-        <div class="agenda-wrap">
-
-          <!-- Top bar -->
-          <div class="agenda-topbar">
-            <div class="agenda-topbar-left">
-              <!-- Search -->
-              <div class="agenda-search">
-                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <input type="text" id="agenda-srch" placeholder="Buscar cliente ou procedimento..." oninput="filterAgenda()">
-              </div>
-              <!-- View toggle -->
-              <div class="view-toggle">
-                <button class="vt-btn" id="vt-sem" onclick="setCalView('semanal',this)">Semanal</button>
-                <button class="vt-btn on" id="vt-men" onclick="setCalView('mensal',this)">Mensal</button>
-              </div>
+      <div class="page" id="page-agenda" style="padding:0;margin:0;">
+        <!-- TIMELINE WRAP -->
+        <div class="tl-wrap">
+          <!-- Header: week strip -->
+          <div class="tl-header">
+            <div class="tl-week-strip">
+              <div class="tl-month-lbl" id="tl-month"></div>
+              <div class="tl-days" id="tl-days-strip"></div>
             </div>
-            <div class="agenda-topbar-right">
-              <button class="btn bs btn-sm" onclick="openBlock()">
-                <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                Bloqueio
-              </button>
-              <button class="btn bp" onclick="openNewAppt()">
-                <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                Agendar
-              </button>
-              <div class="agenda-user" id="agenda-uname">
-                Samira
+            <div class="tl-today-label" id="tl-today-label"></div>
+            <div class="tl-pro-row">
+              <div class="tl-pro-ic"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+              <button class="tl-pro-sel" id="tl-pro-btn" onclick="openProFilter()">
+                <span id="tl-pro-name">SAMIRA OLIVEIRA</span>
                 <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-              </div>
-            </div>
-          </div>
-
-          <!-- Month view -->
-          <div id="cal-monthly">
-            <div class="month-nav">
-              <button class="mnav-btn" onclick="chM(-1)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
-              <div class="month-title" id="cal-ttl"></div>
-              <button class="mnav-btn" onclick="chM(1)"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
-            </div>
-            <div class="cal-wdays">
-              <div class="cal-wd">Dom.</div><div class="cal-wd">Seg.</div>
-              <div class="cal-wd">Ter.</div><div class="cal-wd">Qua.</div>
-              <div class="cal-wd">Qui.</div><div class="cal-wd">Sex.</div>
-              <div class="cal-wd">Sáb.</div>
-            </div>
-            <div class="cal-grid-monthly" id="cal-grid"></div>
-          </div>
-
-          <!-- Week view -->
-          <div id="cal-weekly" style="display:none">
-            <div class="cal-week-wrap">
-              <div class="week-nav">
-                <button class="mnav-btn" onclick="chW(-1)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
-                <div class="week-title" id="week-ttl"></div>
-                <button class="mnav-btn" onclick="chW(1)"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
-              </div>
-              <div class="week-grid" id="week-grid"></div>
-            </div>
-          </div>
-
-          <!-- Selected day panel -->
-          <div class="agenda-side" id="agenda-side" style="display:none">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-              <div class="side-date-title" id="sel-date-ttl">Agendamentos</div>
-              <button class="btn bp btn-sm" onclick="openNewApptDate(S.selDate)">
-                <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                Novo
               </button>
             </div>
-            <div id="sel-day-appts"></div>
           </div>
-
+          <!-- Timeline body -->
+          <div class="tl-body" id="tl-body">
+            <div class="tl-time-col" id="tl-time-col"></div>
+            <div class="tl-events-col" id="tl-events-col"></div>
+          </div>
         </div>
+        <!-- FAB -->
+        <div class="fab-wrap" id="fab-wrap">
+          <div class="fab-options" id="fab-opts">
+            <div class="fab-option">
+              <div class="fab-option-label">Lista de Espera</div>
+              <button class="fab-btn" style="background:#4A90D9" onclick="openWaitlist()">
+                <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              </button>
+            </div>
+            <div class="fab-option">
+              <div class="fab-option-label">Novo Compromisso/Bloqueio</div>
+              <button class="fab-btn" style="background:#888" onclick="openBlock();closeFab()">
+                <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </button>
+            </div>
+            <div class="fab-option">
+              <div class="fab-option-label">Novo Agendamento</div>
+              <button class="fab-btn" style="background:#5A8A5A" onclick="openNewAppt();closeFab()">
+                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </button>
+            </div>
+          </div>
+          <button class="fab-main" id="fab-main" onclick="toggleFab()">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
+        <!-- Today button -->
+        <button class="fab-today" onclick="goToday()">Hoje</button>
       </div>
 
       <!-- ══ CLIENTES ══ -->
@@ -936,6 +1157,23 @@ input,select,textarea{font-family:var(--fb);}
             <div class="sec-h" style="margin-top:20px"><span class="sec-lbl">Instalar como App</span><div class="sec-line"></div></div>
             <div class="card"><div class="card-body">
               <p style="font-size:11px;color:var(--t2);line-height:1.9"><strong>iPhone/iPad:</strong> Safari → Compartilhar → Adicionar à Tela de Início<br><strong>Android:</strong> Chrome → Menu → Instalar app<br><strong>Computador:</strong> Chrome → Ícone de instalação na barra de endereço</p>
+            </div></div>
+          </div>
+          <!-- ADMIN PANEL - only for Samira -->
+          <div id="admin-col" style="display:none">
+            <div class="sec-h"><span class="sec-lbl">Painel Administrativo</span><div class="sec-line"></div></div>
+            <div class="admin-panel">
+              <div class="admin-title">Clínicas Cadastradas</div>
+              <div id="admin-panel-content"><div style="font-size:11px;color:var(--t3)">Carregando...</div></div>
+            </div>
+            <div class="sec-h" style="margin-top:20px"><span class="sec-lbl">Gerenciar Cupons</span><div class="sec-line"></div></div>
+            <div class="card"><div class="card-body">
+              <div class="fg" style="margin-bottom:14px">
+                <div class="fi"><label class="fl">Código do Cupom</label><input class="fin" type="text" id="adm-coup-code" placeholder="EX: PROMO30" style="text-transform:uppercase"></div>
+                <div class="fi"><label class="fl">Desconto (%)</label><input class="fin" type="number" id="adm-coup-val" placeholder="20"></div>
+              </div>
+              <button class="btn bp" onclick="saveCouponAdmin()">Criar Cupom</button>
+              <div id="admin-coupons-list" style="margin-top:14px"></div>
             </div></div>
           </div>
         </div>
@@ -1182,6 +1420,17 @@ input,select,textarea{font-family:var(--fb);}
       </div>
       <div id="anam-form-preview"></div>
       <div class="fi" style="margin-top:14px"><label class="fl">Observações</label><textarea class="fta" id="ar-notes" placeholder="Observações adicionais..."></textarea></div>
+      <div style="margin-top:14px">
+        <label class="fl" style="display:block;margin-bottom:8px">Assinatura Digital da Cliente</label>
+        <div class="sig-wrap">
+          <canvas class="sig-canvas" id="sig-canvas" width="460" height="180"></canvas>
+          <div class="sig-controls">
+            <button class="btn bs btn-sm" onclick="clearSig()">Limpar</button>
+            <span style="font-size:10px;color:var(--t3);flex:1;text-align:center;letter-spacing:.3px">Assine com o dedo ou mouse</span>
+            <span style="font-size:9px;color:var(--green)">✓ Válida juridicamente</span>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="mfoot"><button class="btn bs" onclick="closeOv('ov-anam-r')">Cancelar</button><button class="btn bp" onclick="saveAnamRecord()">Salvar Ficha</button></div>
   </div>
@@ -1206,6 +1455,87 @@ input,select,textarea{font-family:var(--fb);}
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- CALENDAR OVERLAY -->
+<div class="cal-overlay" id="cal-overlay" onclick="if(event.target===this)closeCalOverlay()">
+  <div class="cal-popup">
+    <div class="cal-popup-search">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="cal-overlay-srch" placeholder="Buscar cliente ou procedimento..." oninput="filterCalOverlay()">
+      <button onclick="closeCalOverlay()" style="background:none;border:none;color:var(--t3);font-size:20px;line-height:1;padding:0 4px;">×</button>
+    </div>
+    <!-- Mini calendar in overlay -->
+    <div style="padding:0 8px 8px">
+      <div class="month-nav" style="padding:12px 0 8px">
+        <button class="mnav-btn" onclick="chCalOverlay(-1)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <div class="month-title" id="cal-ov-ttl" style="font-size:16px"></div>
+        <button class="mnav-btn" onclick="chCalOverlay(1)"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+      </div>
+      <div class="cal-wdays" style="padding:0 4px">
+        <div class="cal-wd">D</div><div class="cal-wd">S</div><div class="cal-wd">T</div>
+        <div class="cal-wd">Q</div><div class="cal-wd">Q</div><div class="cal-wd">S</div><div class="cal-wd">S</div>
+      </div>
+      <div class="cal-grid-monthly" id="cal-ov-grid" style="padding:0 4px 4px;gap:3px 2px"></div>
+    </div>
+    <!-- Search results -->
+    <div id="cal-ov-results" style="border-top:1px solid var(--bdl);padding:12px 16px;display:none">
+      <div style="font-size:8.5px;letter-spacing:2px;text-transform:uppercase;color:var(--c2);margin-bottom:10px">Resultados</div>
+      <div id="cal-ov-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROFESSIONAL FILTER -->
+<div class="ov" id="ov-pro-filter">
+  <div class="modal" style="max-width:320px">
+    <div class="mhd"><div class="mttl">Profissional</div><button class="mclose" onclick="closeOv('ov-pro-filter')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="mbody" id="pro-filter-list"></div>
+  </div>
+</div>
+
+<!-- WORKING HOURS MODAL -->
+<div class="ov" id="ov-hours">
+  <div class="modal">
+    <div class="mhd"><div class="mttl">Horários de Atendimento</div><button class="mclose" onclick="closeOv('ov-hours')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="mbody">
+      <div class="fg" style="margin-bottom:16px">
+        <div class="fi"><label class="fl">Início do dia</label><input class="fin" type="time" id="wh-start" value="08:00"></div>
+        <div class="fi"><label class="fl">Fim do dia</label><input class="fin" type="time" id="wh-end" value="18:00"></div>
+        <div class="fi"><label class="fl">Intervalo início</label><input class="fin" type="time" id="wh-break-start" value="12:00"></div>
+        <div class="fi"><label class="fl">Intervalo fim</label><input class="fin" type="time" id="wh-break-end" value="13:00"></div>
+      </div>
+      <div class="fi full" style="margin-bottom:12px"><label class="fl">Dias de trabalho</label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px" id="wh-days">
+          <label style="display:flex;align-items:center;gap:4px;font-size:11px"><input type="checkbox" value="0" id="wd-0"> Dom</label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:11px"><input type="checkbox" value="1" id="wd-1" checked> Seg</label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:11px"><input type="checkbox" value="2" id="wd-2" checked> Ter</label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:11px"><input type="checkbox" value="3" id="wd-3" checked> Qua</label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:11px"><input type="checkbox" value="4" id="wd-4" checked> Qui</label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:11px"><input type="checkbox" value="5" id="wd-5" checked> Sex</label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:11px"><input type="checkbox" value="6" id="wd-6"> Sáb</label>
+        </div>
+      </div>
+    </div>
+    <div class="mfoot"><button class="btn bs" onclick="closeOv('ov-hours')">Cancelar</button><button class="btn bp" onclick="saveWorkingHours()">Salvar</button></div>
+  </div>
+</div>
+
+<!-- WAITLIST -->
+<div class="ov" id="ov-waitlist">
+  <div class="modal">
+    <div class="mhd"><div class="mttl">Lista de Espera</div><button class="mclose" onclick="closeOv('ov-waitlist')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="mbody">
+      <div class="fg" style="margin-bottom:16px">
+        <div class="fi full"><label class="fl">Cliente</label><select class="fsel" id="wl-client"><option value="">Selecione</option></select></div>
+        <div class="fi full"><label class="fl">Procedimento</label><select class="fsel" id="wl-proc"><option value="">Selecione</option></select></div>
+        <div class="fi"><label class="fl">Preferência de dia</label><input class="fin" type="text" id="wl-day" placeholder="Ex: Segundas à tarde"></div>
+        <div class="fi"><label class="fl">Adicionado em</label><input class="fin" type="date" id="wl-date"></div>
+      </div>
+      <div id="wl-list" style="border-top:1px solid var(--bdl);padding-top:12px"></div>
+    </div>
+    <div class="mfoot"><button class="btn bs" onclick="closeOv('ov-waitlist')">Fechar</button><button class="btn bp" onclick="saveWaitlist()">Adicionar</button></div>
+  </div>
+</div>
 
 <script>
 /* ════════════════════════════════════════════════
@@ -1369,6 +1699,7 @@ function seedDemo(){
 
 // ── NAVIGATION ────────────────────────────────────
 const TITLES={dashboard:'Painel',agenda:'Agenda',clientes:'Clientes',anamnese:'Anamnese',mensagens:'Mensagens',procedimentos:'Procedimentos',cursos:'Cursos & Outros',financeiro:'Financeiro',despesas:'Despesas',estoque:'Estoque',equipe:'Equipe',config:'Configurações'};
+function isAdmin(){return S.user?.email===ADMIN_EMAIL||S.user?.user_metadata?.email===ADMIN_EMAIL;}
 function goPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));
   document.querySelectorAll('.ni').forEach(b=>b.classList.toggle('on',b.dataset.p===id));
@@ -1376,6 +1707,11 @@ function goPage(id){
   ge('pg-ttl').textContent=TITLES[id]||id;
   closeSB();
   const r={dashboard:renderDashboard,agenda:renderCalendar,clientes:renderClients,mensagens:renderMsgs,procedimentos:renderProcs,financeiro:renderFin,despesas:renderExpenses,estoque:renderStock,equipe:renderTeam,anamnese:renderAnamnese,cursos:renderCursos};
+  if(id==='config'){
+    const adminCol=ge('admin-col');
+    if(adminCol){adminCol.style.display=isAdmin()?'block':'none';}
+    if(isAdmin()){renderAdminPanel();renderAdminCoupons();}
+  }
   if(r[id])r[id]();
 }
 function toggleSB(){ge('sb').classList.toggle('open');ge('sbbk').classList.toggle('open');}
@@ -1781,6 +2117,393 @@ function delCurso(id){if(!confirm('Remover?'))return;S.cursos=S.cursos.filter(c=
 function saveConfig(){const u=ge('cfg-url').value.trim(),k=ge('cfg-key').value.trim();if(!u||!k){tk('Preencha URL e chave.');return;}lss('sb_u',u);lss('sb_k',k);if(initSB()){tk('✓ Conectado ao Supabase!');}else tk('❌ Erro ao conectar.');}
 function saveProfile(){const p={...S.profile,business:ge('cfg-biz').value,goal:parseFloat(ge('cfg-goal').value)||5000,wa:ge('cfg-wa').value};lss('sbc_profile',JSON.stringify(p));S.profile=p;tk('✓ Perfil salvo!');}
 
+
+// ══════════════════════════════════════════════════════
+//  SUBSCRIPTION SYSTEM — SBC AGENDA SAAS
+// ══════════════════════════════════════════════════════
+
+const ADMIN_EMAIL = 'studiosamirabeauty1@gmail.com'; // Samira nunca paga
+const PLANOS = {
+  mensal: { valor: 25.90, label: 'R$ 25,90/mês' },
+  anual:  { valor: 297.00, label: 'R$ 297,00/ano (10x R$ 29,70)' }
+};
+
+let subState = {
+  plano: 'mensal',
+  payMethod: 'pix',
+  cupom: null,
+  clinica: null,
+  desconto: 0,
+};
+
+// ── CHECK SUBSCRIPTION STATUS ──────────────────────────
+async function checkSubscription(email) {
+  // Admin never blocked
+  if(email === ADMIN_EMAIL) return { status: 'admin', ok: true };
+
+  if(!SB) return { status: 'local', ok: true };
+
+  try {
+    const { data } = await SB.from('clinicas')
+      .select('*')
+      .eq('owner_email', email)
+      .single();
+
+    if(!data) return { status: 'new', ok: false };
+
+    subState.clinica = data;
+
+    // Check if blocked
+    if(data.bloqueado) return { status: 'blocked', ok: false, msg: 'Acesso bloqueado por falta de pagamento.' };
+
+    // Check trial
+    if(data.assinatura_status === 'trial') {
+      const trialFim = new Date(data.trial_fim);
+      const now = new Date();
+      if(now > trialFim) {
+        // Trial expired - check grace period (5 days)
+        const diffDays = Math.floor((now - trialFim) / 86400000);
+        if(diffDays > 5) {
+          await SB.from('clinicas').update({ bloqueado: true, bloqueado_em: new Date().toISOString() }).eq('id', data.id);
+          return { status: 'blocked', ok: false, msg: 'Seu período de teste expirou. Assine para continuar.' };
+        }
+        return { status: 'trial_ending', ok: true, daysLeft: 5 - diffDays };
+      }
+      const daysLeft = Math.floor((trialFim - now) / 86400000);
+      return { status: 'trial', ok: true, daysLeft };
+    }
+
+    // Check active subscription
+    if(data.assinatura_status === 'active') {
+      const fim = new Date(data.assinatura_fim);
+      const now = new Date();
+      if(now > fim) {
+        const diffDays = Math.floor((now - fim) / 86400000);
+        if(diffDays > 5) {
+          await SB.from('clinicas').update({ bloqueado: true }).eq('id', data.id);
+          return { status: 'blocked', ok: false, msg: 'Pagamento em atraso. Regularize para continuar.' };
+        }
+        return { status: 'overdue', ok: true, daysLeft: 5 - diffDays };
+      }
+      return { status: 'active', ok: true };
+    }
+
+    return { status: data.assinatura_status, ok: false };
+  } catch(e) {
+    console.error('Sub check error:', e);
+    return { status: 'error', ok: true }; // Allow on error
+  }
+}
+
+// ── CREATE CLINICA ON FIRST LOGIN ─────────────────────
+async function createClinica(user) {
+  if(!SB) return;
+  const nome = user.user_metadata?.name || user.email.split('@')[0];
+  try {
+    const { data: existing } = await SB.from('clinicas').select('id').eq('owner_email', user.email).single();
+    if(existing) return existing;
+    const { data } = await SB.from('clinicas').insert({
+      nome: nome + ' Beauty',
+      owner_id: user.id || uid(),
+      owner_email: user.email,
+      owner_nome: nome,
+    }).select().single();
+    return data;
+  } catch(e) { console.error('Create clinica error:', e); }
+}
+
+// ── SUBSCRIPTION SCREEN ───────────────────────────────
+function showSubScreen() {
+  ge('blocked-screen').classList.remove('show');
+  ge('sub-screen').classList.add('show');
+}
+
+function selectPlan(plano) {
+  subState.plano = plano;
+  ge('plan-mensal').classList.toggle('selected', plano === 'mensal');
+  ge('plan-anual').classList.toggle('selected', plano === 'anual');
+  updateSubTotal();
+  // Update installments for annual
+  if(plano === 'anual') {
+    let opts = '';
+    for(let i=1;i<=10;i++) opts += `<option value="${i}">${i}x de R$ ${(297/i).toFixed(2).replace('.',',')}</option>`;
+    ge('card-inst').innerHTML = opts;
+  } else {
+    ge('card-inst').innerHTML = '<option value="1">1x sem juros</option>';
+  }
+}
+
+function selectPay(method) {
+  subState.payMethod = method;
+  ge('pay-pix').classList.toggle('selected', method === 'pix');
+  ge('pay-card').classList.toggle('selected', method === 'card');
+  ge('card-form').style.display = method === 'card' ? 'block' : 'none';
+  ge('pix-section').style.display = 'none';
+}
+
+async function applyCoupon() {
+  const code = ge('coupon-input').value.trim().toUpperCase();
+  if(!code) return;
+  const msgEl = ge('coupon-msg');
+  msgEl.style.display = 'block';
+  msgEl.className = 'coupon-msg';
+  msgEl.textContent = 'Verificando...';
+
+  try {
+    if(SB) {
+      const { data } = await SB.from('cupons').select('*').eq('codigo', code).eq('ativo', true).single();
+      if(!data) { msgEl.className = 'coupon-msg coupon-err'; msgEl.textContent = '❌ Cupom inválido ou expirado.'; return; }
+      if(data.valido_ate && new Date(data.valido_ate) < new Date()) { msgEl.className = 'coupon-msg coupon-err'; msgEl.textContent = '❌ Cupom expirado.'; return; }
+      if(data.usos_atual >= data.usos_max) { msgEl.className = 'coupon-msg coupon-err'; msgEl.textContent = '❌ Cupom esgotado.'; return; }
+      subState.cupom = data;
+      if(data.desconto_tipo === 'percentual') subState.desconto = data.desconto_valor;
+      else subState.desconto = 0;
+      msgEl.className = 'coupon-msg coupon-ok'; msgEl.textContent = `✓ Cupom aplicado! ${data.desconto_valor}% de desconto.`;
+    } else {
+      // Local fallback
+      if(code === 'BEMVINDA') { subState.desconto = 20; msgEl.className = 'coupon-msg coupon-ok'; msgEl.textContent = '✓ Cupom aplicado! 20% de desconto.'; }
+      else { msgEl.className = 'coupon-msg coupon-err'; msgEl.textContent = '❌ Cupom inválido.'; return; }
+    }
+    updateSubTotal();
+  } catch(e) { msgEl.className = 'coupon-msg coupon-err'; msgEl.textContent = '❌ Erro ao verificar cupom.'; }
+}
+
+function updateSubTotal() {
+  const plano = PLANOS[subState.plano];
+  let valor = plano.valor;
+  if(subState.desconto > 0) valor = valor * (1 - subState.desconto/100);
+  const suffix = subState.plano === 'mensal' ? '/mês' : '/ano';
+  ge('sub-total').textContent = `R$ ${valor.toFixed(2).replace('.',',')}${suffix}`;
+}
+
+async function doSubscribe() {
+  const btn = ge('sub-btn');
+  btn.disabled = true;
+  btn.textContent = 'Processando...';
+
+  try {
+    if(subState.payMethod === 'pix') {
+      await generatePix();
+    } else {
+      await processCard();
+    }
+  } catch(e) {
+    tk('❌ Erro ao processar. Tente novamente.');
+    btn.disabled = false;
+    btn.textContent = 'Começar 30 dias grátis';
+  }
+}
+
+async function generatePix() {
+  ge('pix-section').style.display = 'block';
+  ge('sub-btn').style.display = 'none';
+
+  const plano = PLANOS[subState.plano];
+  let valor = plano.valor;
+  if(subState.desconto > 0) valor = valor * (1 - subState.desconto/100);
+
+  // Activate trial immediately and show PIX for first payment
+  if(SB && S.user) {
+    await createClinicaIfNeeded();
+    // Register pending payment
+    await SB.from('pagamentos').insert({
+      clinica_id: subState.clinica?.id,
+      valor: valor,
+      plano: subState.plano,
+      status: 'pendente',
+      metodo: 'pix',
+    });
+  }
+
+  // Generate PIX code (MP API via proxy or mock)
+  const pixCode = `00020126580014BR.GOV.BCB.PIX0136${uid()}5204000053039865802BR5925SAMIRA BEAUTY CLINIC6009SAO PAULO62140510${Math.random().toString(36).substr(2,8)}6304`;
+  ge('pix-code').textContent = pixCode.substring(0, 60) + '...';
+
+  // Show QR placeholder
+  ge('pix-qr').innerHTML = `<div style="text-align:center;padding:10px"><div style="font-size:36px">📱</div><div style="font-size:10px;color:var(--t3);margin-top:8px">QR Code PIX<br>R$ ${valor.toFixed(2).replace('.',',')}</div></div>`;
+
+  // Activate trial and enter app
+  setTimeout(async () => {
+    await activateTrial();
+    ge('sub-screen').classList.remove('show');
+    enterAppAfterSub();
+  }, 2000);
+}
+
+async function processCard() {
+  const num = ge('card-num')?.value.replace(/\s/g,'');
+  const name = ge('card-name')?.value;
+  if(!num || num.length < 15 || !name) { tk('Preencha os dados do cartão.'); ge('sub-btn').disabled=false; ge('sub-btn').textContent='Começar 30 dias grátis'; return; }
+  // Activate trial
+  await activateTrial();
+  ge('sub-screen').classList.remove('show');
+  tk('✓ Assinatura ativada! Aproveite seus 30 dias grátis!');
+  enterAppAfterSub();
+}
+
+async function createClinicaIfNeeded() {
+  if(!SB || !S.user) return;
+  try {
+    const { data } = await SB.from('clinicas').select('*').eq('owner_email', S.user.email).single();
+    if(data) { subState.clinica = data; return; }
+    const { data: nova } = await SB.from('clinicas').insert({
+      nome: (S.user.user_metadata?.name || S.user.email.split('@')[0]) + ' Beauty',
+      owner_id: S.user.id || uid(),
+      owner_email: S.user.email,
+      owner_nome: S.user.user_metadata?.name || S.user.email.split('@')[0],
+    }).select().single();
+    subState.clinica = nova;
+  } catch(e) { console.error(e); }
+}
+
+async function activateTrial() {
+  lss('sbc_trial_start', new Date().toISOString());
+  if(SB && S.user) {
+    await createClinicaIfNeeded();
+    if(subState.clinica) {
+      await SB.from('clinicas').update({
+        assinatura_status: 'trial',
+        trial_fim: new Date(Date.now() + 30*24*60*60*1000).toISOString(),
+        bloqueado: false,
+      }).eq('id', subState.clinica.id);
+    }
+  }
+}
+
+function enterAppAfterSub() {
+  ge('auth').classList.remove('show');
+  ge('app').classList.add('show');
+  loadData();
+  renderDashboard();
+  tk('🎉 Bem-vinda ao SBC Agenda! 30 dias grátis ativados!');
+}
+
+function copyPix() {
+  const code = ge('pix-code').textContent;
+  navigator.clipboard.writeText(code).then(() => tk('✓ Código PIX copiado!')).catch(() => {});
+}
+
+// ── PATCH enterApp to check subscription ─────────────
+const _origEnterApp = enterApp;
+enterApp = async function() {
+  const email = S.user?.email || S.user?.user_metadata?.email || '';
+
+  // Admin bypass
+  if(email === ADMIN_EMAIL) {
+    _origEnterApp();
+    return;
+  }
+
+  // Check local trial
+  const trialStart = lsg('sbc_trial_start');
+  if(!trialStart) {
+    // First time - show subscription screen
+    ge('auth').classList.remove('show');
+    ge('sub-screen').classList.add('show');
+    return;
+  }
+
+  // Check if local trial expired (30 days)
+  const trialDate = new Date(trialStart);
+  const daysPassed = Math.floor((new Date() - trialDate) / 86400000);
+
+  if(daysPassed > 35) {
+    // 30 days trial + 5 grace = blocked
+    ge('auth').classList.remove('show');
+    ge('blocked-screen').classList.add('show');
+    ge('blocked-msg').textContent = 'Seu período de acesso expirou. Assine o SBC Agenda para continuar.';
+    return;
+  }
+
+  if(daysPassed > 30) {
+    // In grace period
+    const daysLeft = 35 - daysPassed;
+    _origEnterApp();
+    setTimeout(() => tk(`⚠️ Acesso encerrado em ${daysLeft} dia${daysLeft>1?'s':''}! Regularize seu pagamento.`), 1000);
+    return;
+  }
+
+  if(daysPassed >= 25) {
+    const daysLeft = 30 - daysPassed;
+    _origEnterApp();
+    setTimeout(() => tk(`⏰ Período grátis termina em ${daysLeft} dia${daysLeft>1?'s':''}!`), 1000);
+    return;
+  }
+
+  _origEnterApp();
+};
+
+// ── ADMIN PANEL ───────────────────────────────────────
+async function renderAdminPanel() {
+  if(!SB) return;
+  try {
+    const { data: clinicas } = await SB.from('clinicas').select('*');
+    if(!clinicas) return;
+    const ativas = clinicas.filter(c => c.assinatura_status === 'active' || c.assinatura_status === 'trial').length;
+    const bloqueadas = clinicas.filter(c => c.bloqueado).length;
+    const receita = clinicas.filter(c => c.plano === 'mensal').length * 25.90 + clinicas.filter(c => c.plano === 'anual').length * 24.75;
+    const panel = ge('admin-panel-content');
+    if(panel) panel.innerHTML = `
+      <div class="admin-stat-row">
+        <div class="admin-stat"><div class="admin-stat-val">${clinicas.length}</div><div class="admin-stat-lbl">Clínicas</div></div>
+        <div class="admin-stat"><div class="admin-stat-val">${ativas}</div><div class="admin-stat-lbl">Ativas</div></div>
+        <div class="admin-stat"><div class="admin-stat-val" style="color:var(--green)">R$ ${receita.toFixed(0)}</div><div class="admin-stat-lbl">MRR estimado</div></div>
+      </div>
+      <div style="margin-top:12px">
+        ${clinicas.map(c=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdl);font-size:12px">
+          <div><strong>${c.nome}</strong><br><span style="color:var(--t3)">${c.owner_email}</span></div>
+          <div style="text-align:right"><span class="tag ${c.bloqueado?'tag-r':c.assinatura_status==='trial'?'tag-o':'tag-g'}">${c.bloqueado?'Bloqueada':c.assinatura_status}</span>${c.bloqueado?`<br><button class="btn bp btn-sm" style="margin-top:4px" onclick="desbloquear('${c.id}')">Desbloquear</button>`:''}</div>
+        </div>`).join('')}
+      </div>`;
+  } catch(e) { console.error(e); }
+}
+
+async function desbloquear(id) {
+  if(!SB) return;
+  await SB.from('clinicas').update({ bloqueado: false, assinatura_status: 'active', assinatura_fim: new Date(Date.now()+30*24*60*60*1000).toISOString() }).eq('id', id);
+  renderAdminPanel();
+  tk('✓ Clínica desbloqueada!');
+}
+
+// ── COUPONS MANAGEMENT ────────────────────────────────
+async function saveCouponAdmin() {
+  const codigo = ge('adm-coup-code')?.value.trim().toUpperCase();
+  const desconto = parseFloat(ge('adm-coup-val')?.value);
+  if(!codigo || !desconto) { tk('Preencha código e desconto.'); return; }
+  if(SB) {
+    await SB.from('cupons').upsert({ codigo, desconto_tipo: 'percentual', desconto_valor: desconto, plano: 'ambos', usos_max: 999, ativo: true });
+    tk('✓ Cupom salvo!');
+    renderAdminCoupons();
+  }
+}
+
+async function renderAdminCoupons() {
+  if(!SB) return;
+  const { data } = await SB.from('cupons').select('*').order('criado_em', { ascending: false });
+  const el = ge('admin-coupons-list');
+  if(!el || !data) return;
+  el.innerHTML = data.map(c => `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bdl)">
+    <div><strong style="font-size:14px;letter-spacing:1px">${c.codigo}</strong> <span class="tag ${c.ativo?'tag-g':'tag-r'}">${c.ativo?'Ativo':'Inativo'}</span><br><span style="font-size:11px;color:var(--t3)">${c.desconto_valor}% desconto · ${c.usos_atual}/${c.usos_max} usos</span></div>
+    <div style="display:flex;gap:6px">
+      <button class="btn bs btn-sm" onclick="toggleCoupon('${c.id}',${!c.ativo})">${c.ativo?'Desativar':'Ativar'}</button>
+      <button class="btn bd2 btn-sm" onclick="deleteCoupon('${c.id}')">Remover</button>
+    </div>
+  </div>`).join('');
+}
+
+async function toggleCoupon(id, ativo) {
+  if(!SB) return;
+  await SB.from('cupons').update({ ativo }).eq('id', id);
+  renderAdminCoupons();
+}
+
+async function deleteCoupon(id) {
+  if(!confirm('Remover cupom?')) return;
+  if(!SB) return;
+  await SB.from('cupons').delete().eq('id', id);
+  renderAdminCoupons();
+}
+
 // ── INIT ──────────────────────────────────────────
 function updateHamburger(){
   const hbg=document.querySelector('.hbg');
@@ -1805,6 +2528,348 @@ async function init(){
     if(ls){ls.style.opacity='0';setTimeout(()=>{ls.style.display='none';ge('auth').classList.add('show');},700);}
   }
 }
+
+
+// ── TIMELINE AGENDA ─────────────────────────────────────────────────────────
+let tlDate = new Date(); // current viewed date
+let tlPro = 'Samira';   // current pro filter
+let fabOpen = false;
+let sigCanvas, sigCtx, sigDrawing = false;
+let calOvY, calOvM;
+let waitlist = JSON.parse(lsg('sbc_waitlist')||'[]');
+
+// Working hours
+let WH = JSON.parse(lsg('sbc_wh')||'{"start":"08:00","end":"18:00","breakStart":"12:00","breakEnd":"13:00","days":[1,2,3,4,5]}');
+
+function saveWorkingHours(){
+  WH.start=ge('wh-start').value;
+  WH.end=ge('wh-end').value;
+  WH.breakStart=ge('wh-break-start').value;
+  WH.breakEnd=ge('wh-break-end').value;
+  WH.days=[0,1,2,3,4,5,6].filter(d=>ge('wd-'+d)?.checked);
+  lss('sbc_wh',JSON.stringify(WH));
+  closeOv('ov-hours');
+  updateWHSummary();
+  renderTimeline();
+  tk('✓ Horários salvos!');
+}
+function updateWHSummary(){
+  const dayNames=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const dayStr=WH.days.map(d=>dayNames[d]).join(', ');
+  const el=ge('wh-summary');
+  if(el)el.textContent=`${WH.start} – ${WH.end} · ${dayStr}`;
+}
+function loadWHModal(){
+  ge('wh-start').value=WH.start;
+  ge('wh-end').value=WH.end;
+  ge('wh-break-start').value=WH.breakStart||'12:00';
+  ge('wh-break-end').value=WH.breakEnd||'13:00';
+  [0,1,2,3,4,5,6].forEach(d=>{const el=ge('wd-'+d);if(el)el.checked=WH.days.includes(d);});
+}
+
+// ── TIMELINE RENDER ──────────────────────────────────────────────────────────
+function renderTimeline(){
+  renderWeekStrip();
+  renderTimelineBody();
+}
+
+function renderWeekStrip(){
+  const MO=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const DOW=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  // Show 7 days starting from Sunday of current week
+  const day = new Date(tlDate);
+  const startOfWeek = new Date(day);
+  startOfWeek.setDate(day.getDate()-day.getDay());
+
+  ge('tl-month').textContent = MO[tlDate.getMonth()];
+
+  let strip='';
+  for(let i=0;i<7;i++){
+    const d=new Date(startOfWeek);
+    d.setDate(startOfWeek.getDate()+i);
+    const ds=d.toISOString().split('T')[0];
+    const today=new Date(); today.setHours(0,0,0,0);
+    const isToday=d.toDateString()===today.toDateString();
+    const isSel=ds===tlDate.toISOString().split('T')[0];
+    strip+=`<button class="tl-day-btn${isToday?' today':''}${isSel?' selected':''}" onclick="selectTLDay('${ds}')">
+      <div class="tl-day-name">${DOW[d.getDay()]}</div>
+      <div class="tl-day-num">${String(d.getDate()).padStart(2,'0')}</div>
+    </button>`;
+  }
+  ge('tl-days-strip').innerHTML=strip;
+
+  // Today label
+  const MO2=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const today2=new Date();
+  ge('tl-today-label').textContent=`${tlDate.toDateString()===today2.toDateString()?'Hoje, ':''}${tlDate.getDate()} de ${MO2[tlDate.getMonth()]}, ${tlDate.getFullYear()}`;
+}
+
+function timeToMin(t){const[h,m]=t.split(':').map(Number);return h*60+m;}
+function minToTime(m){return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');}
+
+function renderTimelineBody(){
+  const startMin=timeToMin(WH.start||'08:00');
+  const endMin=timeToMin(WH.end||'18:00');
+  const breakStart=timeToMin(WH.breakStart||'12:00');
+  const breakEnd=timeToMin(WH.breakEnd||'13:00');
+  const totalMins=endMin-startMin;
+  const PX_PER_MIN=1.5; // 60px per hour = 1px per min
+  
+  const dateStr=tlDate.toISOString().split('T')[0];
+  const dayAppts=S.appointments.filter(a=>{
+    if(a.date!==dateStr)return false;
+    if(tlPro!=='Todos' && a.pro && a.pro!==tlPro)return false;
+    return true;
+  });
+
+  // Time column
+  let timeHtml='';
+  for(let m=startMin;m<endMin;m+=30){
+    const label=m%60===0?minToTime(m):'';
+    timeHtml+=`<div class="tl-time-slot" style="height:${30*PX_PER_MIN}px">${label}</div>`;
+  }
+  ge('tl-time-col').innerHTML=timeHtml;
+
+  // Events column
+  const totalH=(endMin-startMin)*PX_PER_MIN;
+  let evCol=`<div style="position:relative;height:${totalH}px;min-height:${totalH}px">`;
+  
+  // Hour lines
+  for(let m=startMin;m<endMin;m+=30){
+    const top=(m-startMin)*PX_PER_MIN;
+    const isBreak=(m>=breakStart&&m<breakEnd);
+    evCol+=`<div class="tl-hour-line${isBreak?' shaded':''}" style="position:absolute;left:0;right:0;top:${top}px;height:${30*PX_PER_MIN}px;border-bottom:1px solid var(--bdl);${isBreak?'background:repeating-linear-gradient(45deg,rgba(0,0,0,.03),rgba(0,0,0,.03) 4px,transparent 4px,transparent 12px);':''}"></div>`;
+  }
+
+  // Current time line
+  const now=new Date();
+  const nowMin=now.getHours()*60+now.getMinutes();
+  if(dateStr===new Date().toISOString().split('T')[0]&&nowMin>=startMin&&nowMin<=endMin){
+    const nowTop=(nowMin-startMin)*PX_PER_MIN;
+    evCol+=`<div class="tl-now-line" style="top:${nowTop}px"></div>`;
+  }
+
+  // Appointment blocks
+  dayAppts.forEach(a=>{
+    if(!a.time)return;
+    const aStart=timeToMin(a.time);
+    const aDur=parseInt(a.dur)||60;
+    const aEnd=aStart+aDur;
+    if(aEnd<=startMin||aStart>=endMin)return;
+    const top=Math.max(0,(aStart-startMin))*PX_PER_MIN;
+    const height=Math.min(aEnd,endMin-aStart,aDur)*PX_PER_MIN;
+    const endTime=minToTime(Math.min(aEnd,endMin));
+    evCol+=`<div class="tl-event-block ${a.status||'agendado'}" style="top:${top}px;height:${Math.max(height,40)}px" onclick="editAppt('${a.id}')">
+      <div class="tl-event-time">${a.time} - ${endTime}</div>
+      <div class="tl-event-name"><svg viewBox="0 0 24 24" style="width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;display:inline-block;margin-right:3px"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>${a.clientName||'—'}</div>
+      <div class="tl-event-proc"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>${(a.procName||'').toUpperCase()}</div>
+    </div>`;
+  });
+
+  evCol+='</div>';
+  ge('tl-events-col').innerHTML=evCol;
+
+  // Scroll to working hours start
+  setTimeout(()=>{
+    const body=ge('tl-body');
+    if(body) body.scrollTop=0;
+  },100);
+}
+
+function selectTLDay(ds){
+  tlDate=new Date(ds+'T12:00:00');
+  renderTimeline();
+}
+
+function goToday(){
+  tlDate=new Date();
+  renderTimeline();
+}
+
+// ── FAB ──────────────────────────────────────────────────────────────────────
+function toggleFab(){
+  fabOpen=!fabOpen;
+  ge('fab-opts').classList.toggle('open',fabOpen);
+  ge('fab-main').classList.toggle('open',fabOpen);
+}
+function closeFab(){
+  fabOpen=false;
+  ge('fab-opts').classList.remove('open');
+  ge('fab-main').classList.remove('open');
+}
+
+// ── CALENDAR OVERLAY ─────────────────────────────────────────────────────────
+function openCalOverlay(){
+  calOvY=NOW.getFullYear(); calOvM=NOW.getMonth();
+  renderCalOverlay();
+  ge('cal-overlay').classList.add('open');
+  ge('cal-overlay-srch').value='';
+  ge('cal-ov-results').style.display='none';
+}
+function closeCalOverlay(){ge('cal-overlay').classList.remove('open');}
+function chCalOverlay(d){calOvM+=d;if(calOvM<0){calOvM=11;calOvY--;}if(calOvM>11){calOvM=0;calOvY++;}renderCalOverlay();}
+
+function renderCalOverlay(){
+  const MO2=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  ge('cal-ov-ttl').textContent=`${MO2[calOvM]} ${calOvY}`;
+  const fd=new Date(calOvY,calOvM,1).getDay();
+  const dm=new Date(calOvY,calOvM+1,0).getDate();
+  const dp=new Date(calOvY,calOvM,0).getDate();
+  const CIRC=144.5;
+  let h='';
+  for(let i=fd-1;i>=0;i--){
+    h+=`<div class="cal-day oth"><div class="day-circle-outer" style="width:36px;height:36px"><div class="day-inner" style="width:26px;height:26px;font-size:10px">${dp-i}</div></div></div>`;
+  }
+  for(let d=1;d<=dm;d++){
+    const ds=`${calOvY}-${String(calOvM+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday=d===NOW.getDate()&&calOvM===NOW.getMonth()&&calOvY===NOW.getFullYear();
+    const cnt=S.appointments.filter(a=>a.date===ds&&a.status!=='cancelado').length;
+    const pct=Math.min(cnt/6,1);
+    const offset=CIRC*(1-pct);
+    h+=`<div class="cal-day${isToday?' tdy':''}" onclick="calOverlayGoDay('${ds}')">
+      <div class="day-circle-outer" style="width:36px;height:36px">
+        <svg class="day-ring" viewBox="0 0 52 52"><circle class="day-ring-bg" cx="26" cy="26" r="23"/>${cnt>0?`<circle class="day-ring-fill" cx="26" cy="26" r="23" stroke-dasharray="${CIRC}" stroke-dashoffset="${offset}"/>`:''}
+        </svg>
+        <div class="day-inner" style="width:26px;height:26px;font-size:10px">${d}${cnt>0?`<div class="day-count" style="width:13px;height:13px;font-size:7px">${cnt}</div>`:''}</div>
+      </div>
+    </div>`;
+  }
+  ge('cal-ov-grid').innerHTML=h;
+}
+
+function calOverlayGoDay(ds){
+  closeCalOverlay();
+  tlDate=new Date(ds+'T12:00:00');
+  goPage('agenda');
+  renderTimeline();
+}
+
+function filterCalOverlay(){
+  const q=ge('cal-overlay-srch').value.toLowerCase().trim();
+  if(!q){ge('cal-ov-results').style.display='none';return;}
+  const results=S.appointments.filter(a=>
+    a.clientName?.toLowerCase().includes(q)||(a.procName||'').toLowerCase().includes(q)
+  ).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,10);
+  ge('cal-ov-results').style.display='block';
+  if(!results.length){ge('cal-ov-list').innerHTML=`<p style="font-size:11px;color:var(--t3)">Nenhum resultado</p>`;return;}
+  ge('cal-ov-list').innerHTML=results.map(a=>`<div class="appt-mini" style="margin-bottom:8px;cursor:pointer" onclick="calOverlayGoDay('${a.date}');closeCalOverlay()">
+    <div class="ami-time" style="font-size:11px">${dfmt(a.date)}</div>
+    <div class="ami-info"><div class="ami-name">${a.clientName||'—'}</div><div class="ami-proc">${a.procName} · ${a.time}</div></div>
+  </div>`).join('');
+}
+
+// ── PRO FILTER ───────────────────────────────────────────────────────────────
+function openProFilter(){
+  const list=[{name:'Samira'},...S.team];
+  ge('pro-filter-list').innerHTML=['Todos',...list.map(t=>t.name)].map(n=>
+    `<div class="appt-mini" style="cursor:pointer;${n===tlPro?'background:var(--c3xs)':''}" onclick="setTLPro('${n}')">
+      <div class="ami-name">${n}</div>${n===tlPro?'<span class="tag tag-g">✓ Selecionado</span>':''}
+    </div>`
+  ).join('');
+  openOv('ov-pro-filter');
+}
+function setTLPro(n){
+  tlPro=n;
+  ge('tl-pro-name').textContent=n.toUpperCase();
+  closeOv('ov-pro-filter');
+  renderTimeline();
+}
+
+// ── WAITLIST ─────────────────────────────────────────────────────────────────
+function openWaitlist(){
+  closeFab();
+  ge('wl-client').innerHTML='<option value="">Selecione</option>'+S.clients.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  ge('wl-proc').innerHTML='<option value="">Selecione</option>'+S.procedures.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  ge('wl-date').value=new Date().toISOString().split('T')[0];
+  renderWaitlist();
+  openOv('ov-waitlist');
+}
+function saveWaitlist(){
+  const cid=ge('wl-client').value; if(!cid){tk('Selecione a cliente.');return;}
+  const c=S.clients.find(x=>x.id===cid);
+  const pid=ge('wl-proc').value;
+  const p=S.procedures.find(x=>x.id===pid);
+  const item={id:uid(),clientId:cid,clientName:c.name,procName:p?.name||'—',day:ge('wl-day').value,date:ge('wl-date').value};
+  waitlist.push(item); lss('sbc_waitlist',JSON.stringify(waitlist));
+  renderWaitlist(); tk('✓ Adicionada à lista de espera!');
+}
+function renderWaitlist(){
+  const el=ge('wl-list');
+  if(!waitlist.length){el.innerHTML=`<p style="font-size:11px;color:var(--t3)">Lista de espera vazia</p>`;return;}
+  el.innerHTML=`<div style="font-size:8.5px;letter-spacing:2px;text-transform:uppercase;color:var(--c2);margin-bottom:8px">Na espera</div>`+
+  waitlist.map(w=>`<div class="appt-mini" style="margin-bottom:8px">
+    <div class="ami-info"><div class="ami-name">${w.clientName}</div><div class="ami-proc">${w.procName}${w.day?' · '+w.day:''}</div></div>
+    <button class="btn bd2 btn-sm" onclick="removeWaitlist('${w.id}')">Remover</button>
+  </div>`).join('');
+}
+function removeWaitlist(id){waitlist=waitlist.filter(w=>w.id!==id);lss('sbc_waitlist',JSON.stringify(waitlist));renderWaitlist();}
+
+// ── SIGNATURE PAD ─────────────────────────────────────────────────────────────
+function initSigPad(){
+  sigCanvas=ge('sig-canvas');
+  if(!sigCanvas)return;
+  sigCtx=sigCanvas.getContext('2d');
+  sigCtx.strokeStyle='#2A1A0C';
+  sigCtx.lineWidth=2;
+  sigCtx.lineCap='round';
+  sigCtx.lineJoin='round';
+  
+  const getPos=(e)=>{
+    const rect=sigCanvas.getBoundingClientRect();
+    const scaleX=sigCanvas.width/rect.width;
+    const scaleY=sigCanvas.height/rect.height;
+    if(e.touches){return{x:(e.touches[0].clientX-rect.left)*scaleX,y:(e.touches[0].clientY-rect.top)*scaleY};}
+    return{x:(e.clientX-rect.left)*scaleX,y:(e.clientY-rect.top)*scaleY};
+  };
+  sigCanvas.addEventListener('mousedown',e=>{sigDrawing=true;const p=getPos(e);sigCtx.beginPath();sigCtx.moveTo(p.x,p.y);});
+  sigCanvas.addEventListener('mousemove',e=>{if(!sigDrawing)return;const p=getPos(e);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();});
+  sigCanvas.addEventListener('mouseup',()=>sigDrawing=false);
+  sigCanvas.addEventListener('touchstart',e=>{e.preventDefault();sigDrawing=true;const p=getPos(e);sigCtx.beginPath();sigCtx.moveTo(p.x,p.y);});
+  sigCanvas.addEventListener('touchmove',e=>{e.preventDefault();if(!sigDrawing)return;const p=getPos(e);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();});
+  sigCanvas.addEventListener('touchend',()=>sigDrawing=false);
+}
+function clearSig(){if(sigCtx&&sigCanvas)sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height);}
+function getSigData(){return sigCanvas?sigCanvas.toDataURL():'';} 
+
+// ── PATCH saveAnamRecord to include signature ────────────────────────────────
+const _origSaveAnam = saveAnamRecord;
+saveAnamRecord = function(){
+  const cid=ge('ar-client').value,tid=ge('ar-tmpl').value;
+  if(!cid||!tid){tk('Selecione cliente e modelo.');return;}
+  const c=S.clients.find(x=>x.id===cid),t=S.anamTemplates.find(x=>x.id===tid);
+  const answers={};
+  t.fields.forEach(f=>{
+    const el=ge('af_'+f.id);
+    if(el)answers[f.label]=el.value;
+    else{const r=document.querySelector(`input[name="af_${f.id}"]:checked`);if(r)answers[f.label]=r.value;}
+  });
+  const sigData=getSigData();
+  const rec={id:uid(),clientId:cid,clientName:c.name,tmplId:tid,tmplName:t.name,
+    date:ge('ar-date').value,pro:ge('ar-pro').value||'Samira',
+    answers,notes:ge('ar-notes').value.trim(),
+    signature:sigData,signedAt:new Date().toISOString()};
+  S.anamRecords.push(rec);
+  save('anam_r',S.anamRecords);
+  closeOv('ov-anam-r');
+  renderAnamRecords();
+  tk('✓ Ficha salva com assinatura!');
+};
+
+// ── PATCH goPage to render timeline when opening agenda ───────────────────────
+const _origGoPage = goPage;
+goPage = function(id){
+  _origGoPage(id);
+  if(id==='agenda'){
+    setTimeout(()=>{renderTimeline();},50);
+  }
+};
+
+// ── PATCH openAnamRecord to init signature pad ────────────────────────────────
+const _origOpenAnamRecord = openAnamRecord;
+openAnamRecord = function(){
+  _origOpenAnamRecord();
+  setTimeout(()=>initSigPad(),200);
+};
 
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 setTimeout(init,800);
