@@ -1,0 +1,9 @@
+{
+  "name": "sbc-agenda",
+  "version": "1.0.0",
+  "description": "SBC Agenda - Software de Gestao para Clinicas de Beleza",
+  "dependencies": {
+    "stripe": "^14.0.0",
+    "@supabase/supabase-js": "^2.0.0"
+  }
+}

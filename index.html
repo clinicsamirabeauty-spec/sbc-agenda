@@ -525,7 +525,57 @@ input,select,textarea{font-family:var(--fb);}
   </div>
 </div>
 
-<!-- APP -->
+<!-- SUBSCRIPTION SCREEN -->
+<div id="sub-screen" style="display:none;position:fixed;inset:0;background:linear-gradient(160deg,var(--c3d),var(--c3),#A0724E);z-index:8000;display:none;align-items:center;justify-content:center;padding:20px">
+  <div style="background:white;border-radius:28px;width:100%;max-width:420px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+    <div style="background:linear-gradient(160deg,var(--c3d),var(--c3));padding:32px 28px;text-align:center">
+      <img src="logo.png" style="width:70px;margin:0 auto 12px;display:block" onerror="this.style.display='none'">
+      <div style="font-family:'Playfair Display',serif;font-size:22px;font-style:italic;color:white;letter-spacing:3px">SBC Agenda</div>
+      <div style="font-size:10px;letter-spacing:3px;color:rgba(255,255,255,.5);text-transform:uppercase;margin-top:5px">Software de Gestao para Clinicas</div>
+    </div>
+    <div style="padding:28px">
+      <!-- Trial expired or no subscription -->
+      <div id="sub-msg" style="text-align:center;margin-bottom:22px">
+        <div style="font-size:13px;color:#5C3D20;line-height:1.7" id="sub-msg-text">Escolha seu plano para continuar</div>
+      </div>
+      <!-- Plans -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+        <!-- Mensal -->
+        <a href="https://buy.stripe.com/bJe3cxgJ90V48JSbZr3gk02" target="_blank" style="text-decoration:none">
+          <div style="border:2px solid #D9C4AA;border-radius:16px;padding:16px;text-align:center;cursor:pointer;transition:.2s;background:#F5F0EB" onmouseover="this.style.borderColor='#7D5A3C'" onmouseout="this.style.borderColor='#D9C4AA'">
+            <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#9B7355;margin-bottom:6px">Mensal</div>
+            <div style="font-family:'Playfair Display',serif;font-size:24px;color:#7D5A3C">R$25</div>
+            <div style="font-size:10px;color:#9B7355">,90 / mês</div>
+            <div style="margin-top:10px;background:#7D5A3C;color:white;border-radius:20px;padding:8px;font-size:11px">Assinar</div>
+          </div>
+        </a>
+        <!-- Anual -->
+        <a href="https://buy.stripe.com/bJeaEZdwXbzIe4c2oR3gk01" target="_blank" style="text-decoration:none">
+          <div style="border:2px solid #7D5A3C;border-radius:16px;padding:16px;text-align:center;cursor:pointer;transition:.2s;background:#F0E6D8;position:relative" onmouseover="this.style.background='#E8D8C4'" onmouseout="this.style.background='#F0E6D8'">
+            <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#7D5A3C;color:white;font-size:8px;letter-spacing:1px;padding:3px 10px;border-radius:10px;white-space:nowrap">MAIS POPULAR</div>
+            <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#9B7355;margin-bottom:6px;margin-top:6px">Anual</div>
+            <div style="font-family:'Playfair Display',serif;font-size:24px;color:#7D5A3C">R$297</div>
+            <div style="font-size:10px;color:#9B7355">/ano · R$24,75/mês</div>
+            <div style="font-size:9px;color:#4A7A4A;margin-top:3px">Economia de R$14/ano</div>
+            <div style="margin-top:8px;background:#7D5A3C;color:white;border-radius:20px;padding:8px;font-size:11px">Assinar</div>
+          </div>
+        </a>
+      </div>
+      <!-- Already paid -->
+      <div style="text-align:center;margin-bottom:14px">
+        <button onclick="checkSubAfterPayment()" style="background:none;border:none;color:#7D5A3C;font-size:11px;cursor:pointer;text-decoration:underline">Já assinou? Clique aqui para verificar</button>
+      </div>
+      <!-- Trial info -->
+      <div id="sub-trial-info" style="display:none;text-align:center;margin-bottom:14px">
+        <div style="font-size:11px;color:#9B7355;padding:10px;background:#F0E6D8;border-radius:10px" id="sub-trial-text"></div>
+      </div>
+      <!-- Logout -->
+      <div style="text-align:center">
+        <button onclick="doLogout()" style="background:none;border:none;color:#9B7355;font-size:10px;cursor:pointer">Sair da conta</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div id="app">
   <div class="sbbk" id="sbbk" onclick="closeSB()"></div>
   <aside class="sb" id="sb">
@@ -1288,10 +1338,10 @@ input,select,textarea{font-family:var(--fb);}
 'use strict';
 // ─────────────────────────────────────────────────────────────────────────────
 //  SBC AGENDA v8 — CLEAN REWRITE
-//  Samira Beauty Clinic — studiosamirabeauty1@gmail.com
+//  Samira Beauty Clinic — clinicsamirabeauty@gmail.com
 // ─────────────────────────────────────────────────────────────────────────────
 
-const ADMIN = 'studiosamirabeauty1@gmail.com';
+const ADMIN = 'clinicsamirabeauty@gmail.com';
 const COLORS = ['#C4956A','#7D5A3C','#A0724E','#D4A574','#8B6914','#6B8E8E','#8E6B8E','#8E8E6B','#6B7A8E','#5A8A5A','#8A5A5A','#5A5A8A','#8A7A5A','#5A8A7A','#C49A6C','#9A6CC4','#6CC49A','#C46C9A','#9AC46C','#6C9AC4'];
 const MO = ['Janeiro','Fevereiro','Marco','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const MOS = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -1435,25 +1485,108 @@ async function doLogout() {
 
 function enterApp() {
   ge('auth').classList.remove('show');
-  ge('app').classList.add('show');
   // Load user info
+  let userEmail = '';
   try {
     const stored=lsg('user');
     if(stored) {
       const u=JSON.parse(stored);
+      userEmail = u.email || '';
       const name=u.name||u.email?.split('@')[0]||'Samira';
       ge('user-name').textContent=name.split(' ')[0];
       ge('user-av').textContent=name[0].toUpperCase();
     }
   } catch(e){}
+  // Check subscription
+  checkSubscription(userEmail);
+}
+
+async function checkSubscription(email) {
+  if (!email) { showApp(); return; }
+  // Admin bypass
+  if (email.toLowerCase() === 'clinicsamirabeauty@gmail.com') { showApp(); return; }
+  try {
+    const r = await fetch('/api/verificar-assinatura', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await r.json();
+    lss('sub_status', JSON.stringify(data));
+
+    if (data.status === 'ativa' || data.status === 'trial') {
+      if (data.status === 'trial' && data.days_left <= 5) {
+        // Show warning but let in
+        setTimeout(() => tk(`⏰ Trial expira em ${data.days_left} dia(s). Assine para continuar.`, 6000), 2000);
+      }
+      showApp();
+    } else {
+      // Show subscription screen
+      showSubScreen(data);
+    }
+  } catch(e) {
+    // If API fails, let user in (graceful degradation)
+    console.log('Sub check failed, letting user in:', e);
+    showApp();
+  }
+}
+
+function showApp() {
+  const sub = ge('sub-screen');
+  if (sub) sub.style.display = 'none';
+  ge('app').classList.add('show');
   loadAll();
   renderDashboard();
   updateHamburger();
-  // Apply saved language
   const savedLang=lsg('lang')||'pt';
   currentLang=savedLang;
   setTimeout(()=>{ applyLangDOM(); if(savedLang!=='pt') setLang(savedLang); },200);
 }
+
+function showSubScreen(data) {
+  const sub = ge('sub-screen');
+  if (!sub) { showApp(); return; }
+  sub.style.display = 'flex';
+  const msgEl = ge('sub-msg-text');
+  const trialEl = ge('sub-trial-info');
+  const trialText = ge('sub-trial-text');
+
+  if (data.status === 'trial_expirado') {
+    if (msgEl) msgEl.innerHTML = '⏰ Seu período de teste gratuito de <strong>30 dias</strong> expirou.<br><br>Assine para continuar usando o SBC Agenda.';
+  } else if (data.status === 'inadimplente') {
+    if (msgEl) msgEl.innerHTML = '⚠️ Há um problema com seu pagamento.<br>Assine novamente para reativar.';
+  } else if (data.status === 'cancelada' || data.status === 'expirada') {
+    if (msgEl) msgEl.innerHTML = 'Sua assinatura foi encerrada.<br>Escolha um plano para continuar.';
+  } else {
+    if (msgEl) msgEl.textContent = 'Escolha seu plano para continuar';
+  }
+}
+
+async function checkSubAfterPayment() {
+  tk('Verificando pagamento...');
+  try {
+    const stored = lsg('user');
+    const u = stored ? JSON.parse(stored) : {};
+    const email = u.email;
+    if (!email) { tk('Faça login primeiro.'); return; }
+    const r = await fetch('/api/verificar-assinatura', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await r.json();
+    if (data.status === 'ativa' || data.status === 'trial') {
+      tk('✅ Assinatura ativa! Abrindo o app...');
+      setTimeout(() => showApp(), 1000);
+    } else {
+      tk('Pagamento ainda não confirmado. Aguarde alguns segundos e tente novamente.');
+    }
+  } catch(e) {
+    tk('Erro ao verificar. Tente novamente.');
+  }
+}
+
+
 
 function hideLs() {
   try {
