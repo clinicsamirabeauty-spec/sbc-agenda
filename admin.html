@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SBC Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0F0A06;--card:#1A120B;--gold:#C4956A;--green:#4A9A5A;--red:#C44040;--blue:#5A8ABE;--text:#F0E6D8;--t2:#A8896A;--t3:#6A5040;--bd:#2A1F15;--r:14px}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+button{font-family:'DM Sans',sans-serif;cursor:pointer}
+#login{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg);z-index:100}
+.lbox{background:var(--card);border:1px solid var(--bd);border-radius:24px;padding:40px;width:100%;max-width:360px;text-align:center}
+.logo{font-family:'Playfair Display',serif;font-size:28px;font-style:italic;color:var(--gold);margin-bottom:6px}
+.sub{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--t3);margin-bottom:32px}
+.lbox input{width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:12px 16px;color:var(--text);font-size:14px;margin-bottom:12px;outline:none}
+.lbox input:focus{border-color:var(--gold)}
+.lbtn{width:100%;background:var(--gold);color:#1A120B;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:500}
+.err{font-size:11px;color:var(--red);margin-top:10px;min-height:16px}
+#app{display:none}
+.topbar{background:var(--card);border-bottom:1px solid var(--bd);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.tlogo{font-family:'Playfair Display',serif;font-size:18px;font-style:italic;color:var(--gold)}
+.tbadge{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);background:var(--bg);padding:3px 8px;border-radius:6px;border:1px solid var(--bd);margin-left:10px}
+.outbtn{background:none;border:1px solid var(--bd);color:var(--t2);padding:6px 12px;border-radius:8px;font-size:11px}
+.content{max-width:1000px;margin:0 auto;padding:28px 20px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+.stat{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:18px 20px}
+.sv{font-family:'Playfair Display',serif;font-size:32px;margin-bottom:4px}
+.sl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--t3)}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px}
+.acard{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:20px}
+.atitle{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--t2);margin-bottom:14px}
+.acard input,.acard select{width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:10px 14px;color:var(--text);font-size:13px;margin-bottom:8px;outline:none}
+.acard input:focus{border-color:var(--gold)}
+.gbtn{background:var(--green);color:white;border:none;border-radius:8px;padding:10px 18px;font-size:12px;width:100%;margin-bottom:6px}
+.rbtn{background:var(--red);color:white;border:none;border-radius:8px;padding:10px 18px;font-size:12px;width:100%}
+.goldbtn{background:var(--gold);color:#1A120B;border:none;border-radius:8px;padding:10px 18px;font-size:12px;font-weight:500;width:100%}
+.res{margin-top:8px;font-size:11px;min-height:18px;text-align:center}
+.twrap{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
+.thead{padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.ttitle{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--t2)}
+.tacts{display:flex;gap:8px;flex-wrap:wrap}
+.sinp{background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:7px 12px;color:var(--text);font-size:12px;outline:none;width:200px}
+.sinp:focus{border-color:var(--gold)}
+.fsel{background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:7px 12px;color:var(--text);font-size:12px;outline:none}
+.refbtn{background:var(--card);border:1px solid var(--bd);color:var(--t2);padding:7px 14px;border-radius:8px;font-size:12px}
+table{width:100%;border-collapse:collapse}
+th{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);padding:10px 16px;text-align:left;border-bottom:1px solid var(--bd);font-weight:400}
+td{padding:12px 16px;border-bottom:1px solid var(--bd);font-size:12px;color:var(--t2)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#231810}
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:9px;letter-spacing:1px;text-transform:uppercase}
+.bg{background:#4A9A5A22;color:#4A9A5A}
+.bb{background:#5A8ABE22;color:#5A8ABE}
+.br{background:#C4404022;color:#C44040}
+.bgr{background:#6A504022;color:#6A5040}
+.abtn{background:none;border:1px solid var(--bd);color:var(--t2);padding:4px 10px;border-radius:6px;font-size:10px;margin-right:4px}
+.abtn:hover{border-color:var(--gold);color:var(--gold)}
+.rdbtn{background:none;border:1px solid var(--bd);color:var(--t3);padding:4px 10px;border-radius:6px;font-size:10px}
+.rdbtn:hover{border-color:var(--red);color:var(--red)}
+.empty{text-align:center;padding:40px;color:var(--t3)}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:12px 20px;font-size:12px;color:var(--text);z-index:999;opacity:0;transform:translateY(10px);transition:.3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:600px){.stats{grid-template-columns:1fr 1fr}.acts{grid-template-columns:1fr}.sinp{width:100%}}
+</style>
+</head>
+<body>
+<div id="login">
+  <div class="lbox">
+    <div class="logo">SBC Admin</div>
+    <div class="sub">Painel de Assinaturas</div>
+    <input type="password" id="lpass" placeholder="Senha de acesso" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="lbtn" onclick="doLogin()">Entrar</button>
+    <div class="err" id="lerr"></div>
+  </div>
+</div>
+<div id="app">
+  <div class="topbar">
+    <div style="display:flex;align-items:center">
+      <div class="tlogo">SBC Admin</div>
+      <div class="tbadge">Assinaturas</div>
+    </div>
+    <button class="outbtn" onclick="doLogout()">Sair</button>
+  </div>
+  <div class="content">
+    <div class="stats">
+      <div class="stat"><div class="sv" id="st0">—</div><div class="sl">Total</div></div>
+      <div class="stat"><div class="sv" style="color:var(--green)" id="st1">—</div><div class="sl">Ativas</div></div>
+      <div class="stat"><div class="sv" style="color:var(--blue)" id="st2">—</div><div class="sl">Trial</div></div>
+      <div class="stat"><div class="sv" style="color:var(--red)" id="st3">—</div><div class="sl">Pendentes</div></div>
+    </div>
+    <div class="acts">
+      <div class="acard">
+        <div class="atitle">✓ Liberar Acesso</div>
+        <input type="email" id="lemail" placeholder="email@exemplo.com">
+        <select id="lplano"><option value="mensal">Mensal — R$27,90/mês</option><option value="anual">Anual — R$297,00/ano</option></select>
+        <input type="date" id="lfim">
+        <button class="gbtn" onclick="liberar()">✓ Liberar Acesso</button>
+        <div class="res" id="lres"></div>
+      </div>
+      <div class="acard">
+        <div class="atitle">✗ Bloquear Acesso</div>
+        <input type="email" id="bemail" placeholder="email@exemplo.com">
+        <button class="rbtn" onclick="bloquear()" style="margin-top:8px">✗ Bloquear Acesso</button>
+        <div style="height:16px"></div>
+        <div class="atitle">+ Nova Cliente (Trial)</div>
+        <input type="email" id="aemail" placeholder="email@exemplo.com">
+        <input type="text" id="anome" placeholder="Nome (opcional)">
+        <button class="goldbtn" onclick="adicionar()">+ Adicionar em Trial</button>
+        <div class="res" id="ares"></div>
+      </div>
+    </div>
+    <div class="twrap">
+      <div class="thead">
+        <div class="ttitle">Todas as Clientes</div>
+        <div class="tacts">
+          <input type="text" class="sinp" id="srch" placeholder="Buscar email ou nome..." oninput="filtrar()">
+          <select class="fsel" id="fst" onchange="filtrar()">
+            <option value="">Todos</option>
+            <option value="ativa">Ativas</option>
+            <option value="trial">Trial</option>
+            <option value="trial_expirado">Trial Expirado</option>
+            <option value="inadimplente">Inadimplente</option>
+            <option value="cancelada">Cancelada</option>
+          </select>
+          <button class="refbtn" onclick="carregar()">↻ Atualizar</button>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>Nome / Email</th><th>Status</th><th>Plano</th><th>Validade</th><th>Cadastro</th><th>Ações</th></tr></thead>
+        <tbody id="tbody"><tr><td colspan="6" class="empty">Clique em Atualizar para carregar</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const SUPABASE_URL = 'https://mcbzugxmibffzjsdniiu.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_JO1DodIq1ARX6di5GDPftw_Ddi82_KX';
+const PASS = 'samira@admin2024';
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let all = [];
+let timer;
+
+function doLogin() {
+  const p = document.getElementById('lpass').value;
+  if (p === PASS) {
+    sessionStorage.setItem('adm','1');
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    const d = new Date(); d.setMonth(d.getMonth()+1);
+    document.getElementById('lfim').value = d.toISOString().split('T')[0];
+    carregar();
+  } else {
+    document.getElementById('lerr').textContent = 'Senha incorreta.';
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('adm');
+  document.getElementById('login').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('lpass').value = '';
+}
+
+if (sessionStorage.getItem('adm')==='1') {
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  const d = new Date(); d.setMonth(d.getMonth()+1);
+  setTimeout(()=>{ document.getElementById('lfim').value = d.toISOString().split('T')[0]; carregar(); }, 100);
+}
+
+async function carregar() {
+  document.getElementById('tbody').innerHTML = '<tr><td colspan="6" class="empty">Carregando...</td></tr>';
+  const { data, error } = await sb.from('clinicas').select('owner_email,owner_nome,assinatura_status,plano,assinatura_fim,trial_fim,bloqueado,criado_em').order('criado_em', {ascending:false});
+  if (error) {
+    document.getElementById('tbody').innerHTML = `<tr><td colspan="6" class="empty" style="color:var(--red)">Erro: ${error.message}</td></tr>`;
+    tk('Erro: ' + error.message);
+    return;
+  }
+  all = data || [];
+  stats();
+  renderizar(all);
+  tk('✓ ' + all.length + ' clientes carregadas');
+}
+
+function stats() {
+  document.getElementById('st0').textContent = all.length;
+  document.getElementById('st1').textContent = all.filter(c=>c.assinatura_status==='ativa').length;
+  document.getElementById('st2').textContent = all.filter(c=>c.assinatura_status==='trial').length;
+  document.getElementById('st3').textContent = all.filter(c=>['inadimplente','trial_expirado','cancelada'].includes(c.assinatura_status)).length;
+}
+
+function filtrar() {
+  const q = document.getElementById('srch').value.toLowerCase();
+  const sf = document.getElementById('fst').value;
+  renderizar(all.filter(c=>
+    (!q||(c.owner_email||'').toLowerCase().includes(q)||(c.owner_nome||'').toLowerCase().includes(q))&&
+    (!sf||c.assinatura_status===sf)
+  ));
+}
+
+function renderizar(list) {
+  const badge = {ativa:`<span class="badge bg">Ativa</span>`,trial:`<span class="badge bb">Trial</span>`,trial_expirado:`<span class="badge br">Trial Exp.</span>`,inadimplente:`<span class="badge br">Inadimp.</span>`,cancelada:`<span class="badge bgr">Cancelada</span>`};
+  const tbody = document.getElementById('tbody');
+  if (!list.length) { tbody.innerHTML = '<tr><td colspan="6" class="empty">Nenhum resultado</td></tr>'; return; }
+  tbody.innerHTML = list.map(c => {
+    const st = c.assinatura_status||'trial';
+    const fim = c.assinatura_fim ? fmt(c.assinatura_fim) : c.trial_fim ? fmt(c.trial_fim) : '—';
+    const cad = c.criado_em ? fmt(c.criado_em) : '—';
+    const bloq = c.bloqueado ? ' 🔒' : '';
+    return `<tr>
+      <td style="color:var(--text)">
+        ${c.owner_nome ? `<div style="font-weight:500">${c.owner_nome}</div>` : ''}
+        <div style="font-size:10px;color:var(--t2)">${c.owner_email||'—'}${bloq}</div>
+      </td>
+      <td>${badge[st]||`<span class="badge bgr">${st}</span>`}</td>
+      <td style="text-transform:capitalize">${c.plano||'—'}</td>
+      <td>${fim}</td>
+      <td>${cad}</td>
+      <td>
+        ${st!=='ativa'?`<button class="abtn" onclick="qLiberar('${c.owner_email}')">✓ Liberar</button>`:''}
+        ${st==='ativa'&&!c.bloqueado?`<button class="rdbtn" onclick="qBloquear('${c.owner_email}')">✗ Bloquear</button>`:''}
+        ${c.bloqueado?`<button class="abtn" onclick="qDesbloquear('${c.owner_email}')">🔓 Desbloquear</button>`:''}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function liberar() {
+  const email = document.getElementById('lemail').value.trim().toLowerCase();
+  const plano = document.getElementById('lplano').value;
+  const fim = document.getElementById('lfim').value;
+  if (!email) { setRes('lres','⚠ Informe o email','var(--red)'); return; }
+  const { error } = await sb.from('clinicas').update({assinatura_status:'ativa',plano,assinatura_fim:fim?fim+'T23:59:59Z':null,bloqueado:false}).eq('owner_email',email);
+  if (!error) {
+    setRes('lres','✓ Acesso liberado!','var(--green)');
+    document.getElementById('lemail').value='';
+    tk(`✓ ${email} liberada`);
+    carregar();
+  } else {
+    setRes('lres','✗ '+error.message,'var(--red)');
+  }
+}
+
+async function bloquear() {
+  const email = document.getElementById('bemail').value.trim().toLowerCase();
+  if (!email) { tk('⚠ Informe o email'); return; }
+  if (!confirm(`Bloquear ${email}?`)) return;
+  const { error } = await sb.from('clinicas').update({bloqueado:true,assinatura_status:'cancelada'}).eq('owner_email',email);
+  if (!error) { document.getElementById('bemail').value=''; tk(`🔒 ${email} bloqueada`); carregar(); }
+  else tk('✗ '+error.message);
+}
+
+async function adicionar() {
+  const email = document.getElementById('aemail').value.trim().toLowerCase();
+  const nome = document.getElementById('anome').value.trim();
+  if (!email) { setRes('ares','⚠ Informe o email','var(--red)'); return; }
+  const fim = new Date(); fim.setDate(fim.getDate()+30);
+  const { error } = await sb.from('clinicas').insert({owner_id:crypto.randomUUID(),owner_email:email,owner_nome:nome||email.split('@')[0],nome:nome||email.split('@')[0],tipo:'clinica',plano:'trial',assinatura_status:'trial',trial_fim:fim.toISOString(),criado_em:new Date().toISOString()});
+  if (!error) {
+    setRes('ares','✓ Cliente adicionada em trial!','var(--green)');
+    document.getElementById('aemail').value='';
+    document.getElementById('anome').value='';
+    tk('✓ Cliente adicionada');
+    carregar();
+  } else {
+    setRes('ares','✗ '+error.message,'var(--red)');
+  }
+}
+
+async function qLiberar(email) {
+  const fim = new Date(); fim.setMonth(fim.getMonth()+1);
+  await sb.from('clinicas').update({assinatura_status:'ativa',plano:'mensal',bloqueado:false,assinatura_fim:fim.toISOString()}).eq('owner_email',email);
+  tk(`✓ ${email} liberada`); carregar();
+}
+
+async function qBloquear(email) {
+  if (!confirm(`Bloquear ${email}?`)) return;
+  await sb.from('clinicas').update({bloqueado:true,assinatura_status:'cancelada'}).eq('owner_email',email);
+  tk(`🔒 ${email} bloqueada`); carregar();
+}
+
+async function qDesbloquear(email) {
+  await sb.from('clinicas').update({bloqueado:false,assinatura_status:'ativa'}).eq('owner_email',email);
+  tk(`🔓 ${email} desbloqueada`); carregar();
+}
+
+function fmt(d) { return d ? new Date(d).toLocaleDateString('pt-BR') : '—'; }
+function setRes(id,msg,color) { const e=document.getElementById(id); if(e){e.textContent=msg;e.style.color=color;} }
+function tk(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(timer); timer=setTimeout(()=>t.classList.remove('show'),3000); }
+</script>
+</body>
+</html>
